@@ -7,7 +7,7 @@ from resources.user import UserDelete, UserRegister
 from resources.items import Item, ItemList
 from resources.store import Store, StoreList
 from datetime import timedelta
-from db import db
+#from db import db
 
 
 app = Flask(__name__)
@@ -25,9 +25,9 @@ api = Api(app)
 
 # this automatically creates all the required tables in the data.db file if they don't exist already
 # it happens immediately before the first request is made,
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# @app.before_first_request
+# def create_tables():
+#    db.create_all()
 
 
 jwt = JWT(app, authenticate, identity) # /auth
@@ -39,6 +39,6 @@ api.add_resource(UserRegister, "/register") # http:/127.0.0.1:5000/register
 api.add_resource(UserDelete, "/userdelete/<string:username>") # http:/127.0.0.1:5000/userdelete/username
 api.add_resource(StoreList, "/stores")
 
-if __name__ == "__main__":
-    db.init_app(app)
-    app.run(port=5000, debug=True)
+#if __name__ == "__main__":
+#    db.init_app(app)
+#    app.run(port=5000, debug=True)
