@@ -15,7 +15,8 @@ app = Flask(__name__)
 
 app.config["DEBUG"] = True
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///data.db")
+# to make this work in heroku, .replace() changes postgres into postgresql, inside the library 
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL").replace("://", "ql://", 1)  #, "sqlite:///data.db")
 # turns off the flask sqlalchemy modification tracker, because sqlalchemy has its own
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False
 # To allow flask propagating exception even if debug is set to false on app
