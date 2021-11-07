@@ -15,7 +15,8 @@ app = Flask(__name__)
 
 app.config["DEBUG"] = True
 
-# to make this work in heroku, .replace() changes postgres into postgresql, inside the library 
+# to make this work in heroku, .replace() changes postgres into postgresql,
+# this is needed as these libraries are not updated in Heroku, whereas postres was changed to postresql
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL").replace("://", "ql://", 1)  #, "sqlite:///data.db")
 # turns off the flask sqlalchemy modification tracker, because sqlalchemy has its own
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False

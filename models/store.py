@@ -13,7 +13,7 @@ class StoreModel(db.Model):
         self.name = name
 
     def json(self): # need a query builder: self.items.all() returns a list of objects
-        return {"name": self.name, "items": [item.json() for item in self.items.all()]}
+        return {"name": self.name, "items": [item.json() for item in self.items.all()], "id": self.id}
 # if you don't use lazy='dynamic' then it autmatically creates an object
 # for each item, which can take lots of time if you have many items:
 #       return {"name": self.name, "items": [item.json() for item in self.items}
