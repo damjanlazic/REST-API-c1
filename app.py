@@ -17,7 +17,11 @@ app.config["DEBUG"] = True
 
 # to make this work in heroku, .replace() changes postgres into postgresql,
 # this is needed as these libraries are not updated in Heroku, whereas postres was changed to postresql
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL").replace("://", "ql://", 1)  #, "sqlite:///data.db")
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL").replace("://", "ql://", 1)  #, "sqlite:///data.db")
+#another approach is to add a new configuration variable in Heroku->settings, I named it DATABASE_URL_SPECIAL
+# and copied contents of DATABASE_URL configuration variable in it, than changed postgres to postgresql:
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL_SPECIAL", "sqlite:///data.db")
+
 # turns off the flask sqlalchemy modification tracker, because sqlalchemy has its own
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False
 # To allow flask propagating exception even if debug is set to false on app
