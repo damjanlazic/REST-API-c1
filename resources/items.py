@@ -66,10 +66,14 @@ class Item(Resource):
         data = Item.parser.parse_args() #parser defined in the Item class, so it's a property of all objects, can be accessed by all methods
 #        data = request.get_json(silent=True)
         item = ItemModel.find_by_name(name)
-        if data["price"]==float and data["price"]<=0:
-            return {"message": "This is not Salvation Army, we don't do giveaways"}
+        try:
+            price = float(data["price"])
+            if data["price"]<=0:
+                return {"message": "price has to be greater than 0"}
+        except:
+            return {"message": "Price has to be number! (digits and that sort of stuff)"}
         if item:
-            item.price = data["price"]
+            item.price = price
             item.store_id = data["store_id"]
         else:
             item = ItemModel(name, **data) # data["price"], data["store_id"]
