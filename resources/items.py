@@ -13,13 +13,13 @@ class Item(Resource):
         "price",
         type=float,
         required=True,
-        help="This field cannot be left blank!"
+        help="This field has to be a number greater than 0"
     )
     parser.add_argument(
         "store_id",
         type=int,
         required=True,
-        help="Every item needs a store_id"
+        help="Every item needs to be assigned to a particular store via the store_id number, for more info see the list of available stores"
     )
 
 
@@ -43,7 +43,10 @@ class Item(Resource):
 # so that you can't add an item with a nonexistant store_id number:      
         if StoreModel.find_by_id(item.store_id):
             try:
-                item.save_to_db()
+                if item.price>0:
+                    item.save_to_db()
+                else:
+                    return {"message": "This is not Salvation Army, we don't do giveaways"}
             except:
                 return {"message": "An error occured inserting the item"}, 500
             return item.json(), 201
@@ -63,7 +66,8 @@ class Item(Resource):
         data = Item.parser.parse_args() #parser defined in the Item class, so it's a property of all objects, can be accessed by all methods
 #        data = request.get_json(silent=True)
         item = ItemModel.find_by_name(name)
-
+        if data["price"]==float and data["price"]<=0:
+            return {"message": "This is not Salvation Army, we don't do giveaways"}
         if item:
             item.price = data["price"]
             item.store_id = data["store_id"]

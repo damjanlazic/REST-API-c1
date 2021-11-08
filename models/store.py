@@ -12,11 +12,16 @@ class StoreModel(db.Model):
     def __init__(self, name):
         self.name = name
 
-    def json(self): # need a query builder: self.items.all() returns a list of objects
+    def json(self): 
+        return {"name": self.name, "id": self.id}
+        # returning a list of items for every store is not really practical if there are many stores 
+        # with many items, this is a good example of how it's done:
+        # need a query builder: self.items.all() returns a list of objects
         return {"name": self.name, "items": [item.json() for item in self.items.all()], "id": self.id}
 # if you don't use lazy='dynamic' then it autmatically creates an object
 # for each item, which can take lots of time if you have many items:
 #       return {"name": self.name, "items": [item.json() for item in self.items}
+
     @classmethod
     def find_by_name(cls, name):
 # this makes the query filters from the database and limits the results to 1
