@@ -35,10 +35,18 @@ class UserRegister(Resource):
 # should try to put this delete method in the UserRegister class(rename it to User), by making the resource address:
 # "/user/<string:username>" and then just not use the username for register method, just for delete method
 
-class UserDelete(Resource):    
-    def delete(self, username):
-        user = UserModel.find_by_username(username)
-        if user:
-            user.delete_from_db()
-            return {"message": "User deleted successfully."}
-        return {"message": "User with that username does not exist!"}
+class User(Resource):  
+    @classmethod
+    def get(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {"message": "User not found"}
+        return user.json()
+    
+    @classmethod  
+    def delete(cls, user_id: int):
+        user = UserModel.find_by_id(user_id)
+        if not user:
+            return {"message": "User does not exist!"}
+        user.delete_from_db()
+        return {"message": "User deleted successfully."}

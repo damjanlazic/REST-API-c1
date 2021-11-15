@@ -5,7 +5,7 @@ from flask_restful import Api
 from flask_jwt import JWT
 
 from security import authenticate, identity
-from resources.user import UserDelete, UserRegister
+from resources.user import User, UserRegister
 from resources.items import Item, ItemList
 from resources.store import Store, StoreList
 from datetime import timedelta
@@ -40,7 +40,7 @@ api.add_resource(Store, "/store/<string:name>")
 api.add_resource(Item, "/item/<string:name>") #http://127.0.0.1:5000/item/itemsname
 api.add_resource(ItemList, "/items") # http:/127.0.0.1:5000/items
 api.add_resource(UserRegister, "/register") # http:/127.0.0.1:5000/register
-api.add_resource(UserDelete, "/userdelete/<string:username>") # http:/127.0.0.1:5000/userdelete/username
+api.add_resource(User, "/user/<int:user_id>") # http:/127.0.0.1:5000/user/user_id
 api.add_resource(StoreList, "/stores")
 
 if __name__ == "__main__":

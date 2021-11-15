@@ -85,7 +85,7 @@ class Item(Resource):
 
 class ItemList(Resource):
     def get(self):
-        return {"items :" : [item.json() for item in ItemModel.query.all()]}
+        return {"items :" : [item.json() for item in ItemModel.find_all()]}
     
 # same using lambda and map() - less pythonic but good if collaborating with JavaScripters and such
 # lambda returns the value x.json() while map applies the lambda function to every element of the second argument
