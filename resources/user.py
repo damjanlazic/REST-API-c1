@@ -3,9 +3,16 @@
 from flask_restful import Resource, reqparse
 from models.user import UserModel
 from werkzeug.security import safe_str_cmp
-from flask_jwt_extended import create_access_token, create_refresh_token
+from blacklist import BLACKLIST
+from flask_jwt_extended import (
+    create_access_token, 
+    create_refresh_token, 
+    get_jwt_identity, 
+    jwt_required,
+    get_jwt
+)
 
-
+# python convention: variables starting with _ are private variables
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument(
     "username",            
@@ -34,8 +41,6 @@ class UserRegister(Resource):
         
         return{"message": "User created succsessfully."}, 201
     
-# should try to put this delete method in the UserRegister class(rename it to User), by making the resource address:
-# "/user/<string:username>" and then just not use the username for register method, just for delete method
 
 class User(Resource):  
 
@@ -73,3 +78,19 @@ class UserLogin(Resource):
                 "refresh_token": refresh_token
                 }, 200
         return {"message": "Invalid credentials"},401
+
+class UserLogout(Resource):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"] #jti is "JWT ID" a unique identifier for a JWT
+        BLACKLIST.add(jti)
+        return {"message" : "Successfully logged out"}, 200
+
+
+class TokenRefresh(Resource):
+    
+    @jwt_required(refresh=True)
+    def post(self):
+        current_user = get_jwt_identity()
+        new_token = create_access_token(identity=current_user,fresh=False)
+        return {"access_token": new_token}, 200

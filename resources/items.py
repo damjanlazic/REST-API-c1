@@ -1,6 +1,11 @@
 # import sqlite3
+from typing import Optional
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import (
+    jwt_required, 
+    get_jwt, 
+    get_jwt_identity
+    )
 #from werkzeug.exceptions import InternalServerError
 from models.item import ItemModel
 from models.store import StoreModel
@@ -22,7 +27,6 @@ class Item(Resource):
         help="Every item needs to be assigned to a particular store via the store_id number, for more info see the list of available stores"
     )
 
-
     def get(self, name):
         item = ItemModel.find_by_name(name)
         if item is None:
@@ -30,7 +34,7 @@ class Item(Resource):
 
         return item.json()
 
-    @jwt_required()
+    @jwt_required(fresh=True)
     def post(self, name):
         item = ItemModel.find_by_name(name)
         if item:
@@ -54,6 +58,9 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, name):
+        claims = get_jwt()
+        if not claims["is_admin"]:
+            return {"message": "Admin privilege required."}, 401
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()
@@ -84,8 +91,17 @@ class Item(Resource):
         return {"message": "Store with id: {} does not exist!".format(item.store_id)}, 404
 
 class ItemList(Resource):
+
+    @jwt_required(optional=True)
     def get(self):
-        return {"items :" : [item.json() for item in ItemModel.find_all()]}
+        user_id = get_jwt_identity()
+        items = [item.json() for item in ItemModel.find_all()]
+# works but if your token expires you just get the "Token expired" message
+# the alternative is to make a custom decorator
+        if user_id:
+            return {"items": items}
+# to get this line to work, for now you have to disable authorisation in postman get method
+        return {"items" : [item["name"] for item in items], "message": "More information available if you log in"}
     
 # same using lambda and map() - less pythonic but good if collaborating with JavaScripters and such
 # lambda returns the value x.json() while map applies the lambda function to every element of the second argument
