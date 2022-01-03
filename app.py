@@ -29,6 +29,8 @@ app.config["DEBUG"] = True
 # app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL").replace("://", "ql://", 1)  #, "sqlite:///data.db")
 # another approach is to add a new configuration variable in Heroku->settings, I named it DATABASE_URL_SPECIAL
 # and copied contents of DATABASE_URL configuration variable in it, than changed postgres to postgresql:
+url = os.environ.get("DATABASE_URL").replace("postgres", "postgresql")
+os.environ["DATABASE_URL_SPECIAL"] = url
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL_SPECIAL", "sqlite:///data.db"
 )
